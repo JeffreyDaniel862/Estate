@@ -1,6 +1,6 @@
 export default function Button({children, animate, primaryColor, secondaryColor, className, ...props}){
 
-    let cssClasses = 'p-3 rounded-lg  ';
+    let cssClasses = 'p-3 rounded-lg disabled:opacity-80  ';
 
     if(className){
         cssClasses += className;

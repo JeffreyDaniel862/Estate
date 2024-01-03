@@ -18,8 +18,8 @@ mongoose.connect(process.env.MONGODB)
         console.log(err)
     });
 
-app.use("/user", userRouter);
-app.use("/auth", authRouter);
+app.use("/jd/user", userRouter);
+app.use("/jd/auth", authRouter);
 
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
