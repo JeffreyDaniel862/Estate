@@ -1,20 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../components/Button";
 import Input from "../components/Input";
-import { Form, Link, redirect, useActionData, useNavigation } from "react-router-dom";
+import { Form, Link, useNavigate, useActionData, useNavigation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { userAction } from "../store/userSlice";
 
 export default function SignIn() {
 
     const [formData, setFormData] = useState({});
 
+    const dispatch = useDispatch();
+
     const data = useActionData();
     const navigation = useNavigation();
+    const navigate = useNavigate();
 
     const isSubmitting = navigation.state === "submitting";
 
-    if (data) {
-        console.log(data);
-    }
+    useEffect(() => {
+        if (data && data.success) {
+            console.log(data);
+            dispatch(userAction.login(data));
+            navigate('/');
+        }
+    }, [data, dispatch, navigate]);
+    
 
     function handleChange(event) {
 
@@ -58,14 +68,12 @@ export const signinAction = async ({ request }) => {
         const response = await fetch('/jd/auth/signin', {
             method: "POST",
             headers: {
-                "Content-Type" : "application/json"
+                "Content-Type": "application/json"
             },
             body: JSON.stringify(authData)
         });
 
-        if(response.status !== 200) return response;
-
-        return redirect('/')
+        return response;
 
     } catch (error) {
         console.log(error);
