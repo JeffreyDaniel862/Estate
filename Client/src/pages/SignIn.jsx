@@ -20,7 +20,6 @@ export default function SignIn() {
 
     useEffect(() => {
         if (data && data.success) {
-            console.log(data);
             dispatch(userAction.login(data));
             navigate('/');
         }

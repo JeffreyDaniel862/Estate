@@ -27,7 +27,7 @@ export default function OAuth() {
             dispatch(userAction.login(data));
             navigate("/");
         } catch (error) {
-            console.log("Unable to authenticate using Google");
+            console.log("Unable to authenticate using Google", error);
         }
     }
 
