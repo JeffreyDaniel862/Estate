@@ -3,7 +3,7 @@ import Home from "./pages/Home";
 import SignUp, { signupAction } from "./pages/SignUp";
 import SignIn, { signinAction } from "./pages/SignIn";
 import About from "./pages/About";
-import Profile, { profileLoader } from "./pages/Profile";
+import Profile from "./pages/Profile";
 import RootLayout from "./pages/RootLayout";
 
 const router = createBrowserRouter([
@@ -15,7 +15,7 @@ const router = createBrowserRouter([
       { path: 'sign-up', element: <SignUp />, action: signupAction },
       { path: 'sign-in', element: <SignIn />, action: signinAction },
       { path: 'about', element: <About /> },
-      { path: 'profile', element: <Profile />, loader: profileLoader },
+      { path: 'profile', element: <Profile />},
     ]
   },
 ])

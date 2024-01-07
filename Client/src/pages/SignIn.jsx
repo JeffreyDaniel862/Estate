@@ -39,8 +39,8 @@ export default function SignIn() {
         <div className="p-3 mx-auto max-w-xs sm:max-w-lg my-7 shadow-lg border rounded-md">
             <h1 className="text-3xl font-semibold text-center mb-7">Sign-In</h1>
             <Form method="post" className="flex flex-col gap-4">
-                <Input type="email" placeholder="Email" name="email" id="email" onChange={handleChange} />
-                <Input type="password" placeholder="Password" name="password" id="password" onChange={handleChange} />
+                <Input type="email" placeholder="Email" name="email" id="email" onChange={handleChange} required />
+                <Input type="password" placeholder="Password" name="password" id="password" onChange={handleChange} required />
                 <Button disabled={isSubmitting} primaryColor={true} animate={true}>{isSubmitting ? "Submitting..." : "Sign-In"}</Button>
                 <OAuth />
                 <div className="flex items-center gap-4">

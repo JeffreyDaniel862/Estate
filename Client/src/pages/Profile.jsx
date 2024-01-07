@@ -1,11 +1,12 @@
-import { redirect } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
 
 export default function Profile() {
-    return (<div>Profile</div>)
-}
+    const{ user } = useSelector(state => state.user);
 
-export const profileLoader = () => {
-    const user = JSON.parse(JSON.parse(localStorage.getItem("persist:root")).user);
-    if (!user.user) return redirect("/sign-in");
-    return user;
+    if(!user) return <Navigate to="/sign-in" />
+
+    return (
+        <div>Profile</div>
+    )
 }
