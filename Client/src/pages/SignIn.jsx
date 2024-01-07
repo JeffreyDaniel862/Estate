@@ -4,6 +4,7 @@ import Input from "../components/Input";
 import { Form, Link, useNavigate, useActionData, useNavigation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { userAction } from "../store/userSlice";
+import OAuth from "../components/OAuth";
 
 export default function SignIn() {
 
@@ -42,7 +43,7 @@ export default function SignIn() {
                 <Input type="email" placeholder="Email" name="email" id="email" onChange={handleChange} />
                 <Input type="password" placeholder="Password" name="password" id="password" onChange={handleChange} />
                 <Button disabled={isSubmitting} primaryColor={true} animate={true}>{isSubmitting ? "Submitting..." : "Sign-In"}</Button>
-                <Button secondaryColor={true}>Sign-in with Google</Button>
+                <OAuth />
                 <div className="flex items-center gap-4">
                     <p className="text-slate-900">Do not have an account ?</p>
                     <Link to="/sign-up"><p className="text-red-700 hover:text-red-500" >Sign-Up</p></Link>

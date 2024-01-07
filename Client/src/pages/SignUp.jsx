@@ -2,6 +2,7 @@ import { useState } from "react";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import { Form, Link, redirect, useActionData, useNavigation } from "react-router-dom";
+import OAuth from "../components/OAuth";
 
 export default function SignUp() {
 
@@ -33,7 +34,7 @@ export default function SignUp() {
                 <Input type="email" placeholder="Email" name="email" id="email" onChange={handleChange} />
                 <Input type="password" placeholder="Password" name="password" id="password" onChange={handleChange} />
                 <Button disabled={isSubmitting} primaryColor={true} animate={true}>{isSubmitting? "Submitting..." : "Sign-Up"}</Button>
-                <Button secondaryColor={true}>Sign-up with Google</Button>
+                <OAuth />
                 <div className="flex items-center gap-4">
                     <p className="text-slate-900">Already have an account ?</p>
                     <Link to="/sign-in"><p className="text-red-700 hover:text-red-500" >Sign-In</p></Link>
