@@ -25,7 +25,7 @@ export const signin = async (req, res, next) => {
         if (!validUser) return next(errorHandler(404, 'User not found'));
         const validPassword = bcryptjs.compareSync(password, validUser.password);
         if (!validPassword) return next(errorHandler(404, "Invalid email or password"));
-        const userObject = { email: validUser.email, username: validUser.username, success: true, avatar: validUser.avatar };
+        const userObject = { id: validUser._id, email: validUser.email, username: validUser.username, success: true, avatar: validUser.avatar };
         const token = jwt.sign({ id: validUser._id }, process.env.JWT_MAGIC);
         res.cookie('access_token', token, { httpOnly: true }).status(200).json(userObject);
     } catch (error) {
@@ -38,7 +38,7 @@ export const googleAuth = async (req, res, next) => {
     try {
         const user = await User.findOne({ email });
         if (user) {
-            const userObject = { email: user.email, username: user.username, success: true, avatar: user.avatar }
+            const userObject = { id: user._id, email: user.email, username: user.username, success: true, avatar: user.avatar }
             const token = jwt.sign({ id: user._id }, process.env.JWT_MAGIC);
             res.cookie("access_token", token, { httpOnly: true }).status(200).json(userObject);
         } else {
