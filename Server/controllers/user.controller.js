@@ -18,6 +18,8 @@ export const updateUser = async (req, res, next) => {
         }, {new: true});
         
         res.status(200).json({
+            id: updatedUser._id,
+            success: true,
             username: updatedUser.username,
             email: updatedUser.email,
             avatar: updatedUser.avatar
