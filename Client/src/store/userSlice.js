@@ -13,6 +13,9 @@ const userSlice = createSlice({
         },
         update: (state, action) => {
             state.user = action.payload;
+        },
+        delete: (state, action) => {
+            state.user = null
         }
     }
 });

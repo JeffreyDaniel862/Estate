@@ -48,7 +48,7 @@ export const googleAuth = async (req, res, next) => {
             const newUser = new User({ username: formattedUsername, email, password: hashedPassword, avatar: photo });
             await newUser.save();
             const token = jwt.sign({ id: newUser._id }, process.env.JWT_MAGIC);
-            const userObject = { email: newUser.email, username: newUser.username, success: true, avatar: newUser.avatar };
+            const userObject = {id: newUser._id, email: newUser.email, username: newUser.username, success: true, avatar: newUser.avatar };
             res.cookie("access_token", token, { httpOnly: true }).status(200).json(userObject);
         }
     } catch (error) {

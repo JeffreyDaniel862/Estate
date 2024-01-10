@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { Form, Navigate, useActionData, useNavigation, useSubmit } from "react-router-dom";
+import { Form, Navigate, useActionData, useFetcher, useNavigate, useNavigation, useSubmit } from "react-router-dom";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import { app } from '../firebase.js';
@@ -10,7 +10,6 @@ import { userAction } from "../store/userSlice.js";
 export default function Profile() {
 
     const { user } = useSelector(state => state.user);
-    if (!user) return <Navigate to="/sign-in" />
 
     const initialUploadData = {
         isUploading: false,
@@ -20,19 +19,29 @@ export default function Profile() {
     const imageRef = useRef(null);
     const [file, setFile] = useState(undefined);
     const [uploadData, setUploadData] = useState(initialUploadData);
-    const [formData, setFormData] = useState({ id: user.id });
+    const [formData, setFormData] = useState({ id: user?.id });
     const submit = useSubmit();
     const data = useActionData();
     const dispatch = useDispatch();
     const Navigation = useNavigation();
+    const navigate = useNavigate();
+    const fetcher = useFetcher();
 
-    const isUpdating = Navigation.state === "submitting";
+    const { data: deleteData, state } = fetcher;
+    const isDeleting = state === "submitting";
+
+    useEffect(() => {
+        if (deleteData && deleteData.success) {
+            dispatch(userAction.delete());
+            navigate("/sign-in");
+        }
+    }, [deleteData, dispatch]);
 
     useEffect(() => {
         if (data && data.success) {
             dispatch(userAction.update(data));
         }
-    }, [data, dispatch])
+    }, [data, dispatch]);
 
     useEffect(() => {
         if (file) {
@@ -56,13 +65,14 @@ export default function Profile() {
             () => {
                 getDownloadURL(uploadTask.snapshot.ref)
                     .then(downloadURL => {
-                        console.log(downloadURL);
                         setUploadData({ ...uploadData, isUploading: false });
                         setFormData({ ...formData, avatar: downloadURL })
                     });
             }
         );
     };
+
+    const isUpdating = Navigation.state === "submitting";
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -75,6 +85,11 @@ export default function Profile() {
     const handleSubmit = (e) => {
         e.preventDefault();
         submit(formData, { method: "POST" })
+    }
+
+    const handleDelete = () => {
+        const proceed = window.confirm("This action cannot be undone \n Are you sure ?");
+        if (proceed) fetcher.submit({ id: user.id }, { method: "DELETE", action: "/delete" });
     }
 
     let content = ''
@@ -94,7 +109,7 @@ export default function Profile() {
         }
     }
 
-    return (
+    return !user ? <Navigate to="/sign-in" /> : (
         <div className="max-w-sm sm:max-w-lg mx-auto shadow-lg border p-3 rounded-lg my-7">
             <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
             <Form className="flex flex-col gap-4 " onSubmit={handleSubmit} >
@@ -119,7 +134,7 @@ export default function Profile() {
                 <Button type="button" className="bg-green-700 text-white transition-all hover:bg-green-800 hover:-translate-y-1">Create Listing</Button>
             </Form>
             <div className="flex justify-between mt-5 text-red-600">
-                <span className="cursor-pointer transition-all hover:text-red-700 hover:scale-x-105">Delete Account</span>
+                <span onClick={handleDelete} className="cursor-pointer transition-all hover:text-red-700 hover:scale-x-105">{isDeleting ? "Deleting account" : "Delete Account"}</span>
                 <span className="cursor-pointer transition-all hover:text-red-700 hover:scale-x-105">Sign out</span>
             </div>
             {data &&
@@ -148,5 +163,18 @@ export const profileUpdateAction = async ({ request }) => {
 
     } catch (error) {
         console.log(error)
+    }
+}
+
+export const deleteAction = async ({ request }) => {
+    const data = await request.formData();
+    const id = data.get('id');
+    try {
+        const response = await fetch(`jd/user/delete/${id}`, {
+            method: "DELETE"
+        });
+        return response;
+    } catch (error) {
+        console.log(error);
     }
 }
