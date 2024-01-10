@@ -41,6 +41,10 @@ export default function Profile() {
         if (data && data.success) {
             dispatch(userAction.update(data));
         }
+        if (data && data.signedOut) {
+            dispatch(userAction.signOut());
+            navigate("/sign-in")
+        }
     }, [data, dispatch]);
 
     useEffect(() => {
@@ -72,7 +76,7 @@ export default function Profile() {
         );
     };
 
-    const isUpdating = Navigation.state === "submitting";
+    const isUpdating = Navigation.state === "submitting" && Navigation.formMethod === "post";
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -84,7 +88,11 @@ export default function Profile() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        submit(formData, { method: "POST" })
+        submit(formData, { method: "POST" });
+    }
+
+    const handleSignOut = () => {
+        submit(null, { method: "PATCH" });
     }
 
     const handleDelete = () => {
@@ -135,7 +143,7 @@ export default function Profile() {
             </Form>
             <div className="flex justify-between mt-5 text-red-600">
                 <span onClick={handleDelete} className="cursor-pointer transition-all hover:text-red-700 hover:scale-x-105">{isDeleting ? "Deleting account" : "Delete Account"}</span>
-                <span className="cursor-pointer transition-all hover:text-red-700 hover:scale-x-105">Sign out</span>
+                <span onClick={handleSignOut} className="cursor-pointer transition-all hover:text-red-700 hover:scale-x-105">Sign out</span>
             </div>
             {data &&
                 <div>
@@ -147,22 +155,33 @@ export default function Profile() {
 }
 
 export const profileUpdateAction = async ({ request }) => {
-    const data = await request.formData();
-    const userData = {}
-    data.forEach((value, key) => userData[key] = value);
-    try {
-        const response = await fetch(`jd/user/update/${userData.id}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(userData)
-        });
+    const method = request.method;
+    if (method === "POST") {
+        const data = await request.formData();
+        const userData = {}
+        data.forEach((value, key) => userData[key] = value);
+        try {
+            const response = await fetch(`jd/user/update/${userData.id}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(userData)
+            });
 
-        return response;
+            return response;
 
-    } catch (error) {
-        console.log(error)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    if (method === "PATCH") {
+        try {
+            const response = await fetch("jd/auth/signout");
+            return response;
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
 
@@ -170,7 +189,7 @@ export const deleteAction = async ({ request }) => {
     const data = await request.formData();
     const id = data.get('id');
     try {
-        const response = await fetch(`jd/user/delete/${id}`, {
+        const response = await fetch(`jd/auth/delete/${id}`, {
             method: "DELETE"
         });
         return response;
