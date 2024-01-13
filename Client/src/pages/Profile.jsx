@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { Form, Navigate, useActionData, useFetcher, useNavigate, useNavigation, useSubmit } from "react-router-dom";
+import { Form, Link, Navigate, useActionData, useFetcher, useNavigate, useNavigation, useSubmit } from "react-router-dom";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import { app } from '../firebase.js';
@@ -139,7 +139,9 @@ export default function Profile() {
                 <Input type='email' defaultValue={user.email} onChange={handleChange} id='email' name='email' />
                 <Input type='password' placeholder="password" onChange={handleChange} id='password' name='password' />
                 <Button disabled={isUpdating} primaryColor={true} type="submit">{isUpdating ? "Updating..." : "Update"}</Button>
-                <Button type="button" className="bg-green-700 text-white transition-all hover:bg-green-800 hover:-translate-y-1">Create Listing</Button>
+                <Link to={"/list"}>
+                    <Button type="button" className="bg-green-700 w-full text-white transition-all hover:bg-green-800 hover:-translate-y-1">Create Listing</Button>
+                </Link>
             </Form>
             <div className="flex justify-between mt-5 text-red-600">
                 <span onClick={handleDelete} className="cursor-pointer transition-all hover:text-red-700 hover:scale-x-105">{isDeleting ? "Deleting account" : "Delete Account"}</span>

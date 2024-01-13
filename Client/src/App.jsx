@@ -5,6 +5,7 @@ import SignIn, { signinAction } from "./pages/SignIn";
 import About from "./pages/About";
 import Profile, { deleteAction, profileUpdateAction } from "./pages/Profile.jsx";
 import RootLayout from "./pages/RootLayout";
+import NewList from "./pages/NewList.jsx";
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,7 @@ const router = createBrowserRouter([
       { path: 'sign-in', element: <SignIn />, action: signinAction },
       { path: 'about', element: <About /> },
       { path: 'profile', element: <Profile />, action: profileUpdateAction },
+      { path: 'list', element: <NewList /> },
       { path: 'delete', action: deleteAction }
     ]
   },
