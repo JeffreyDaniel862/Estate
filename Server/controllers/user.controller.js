@@ -1,3 +1,4 @@
+import List from "../models/list.model.js";
 import User from "../models/user.model.js";
 import { errorHandler } from "../utils/errorHandler.js";
 import bcryptjs from 'bcryptjs';
@@ -37,5 +38,16 @@ export const deleteUser = async (req, res, next) => {
         res.clearCookie('access_token').status(200).json({success: true, message: "User account is deleted"});
     } catch (error) {
         next(error);
+    }
+}
+
+export const userList = async (req, res, next) => {
+    if(req.user.id !== req.params.id) return next(errorHandler(401, "Unauthorized to view listing"));
+
+    try {
+        const userList = await List.find({userRef: req.params.id});
+        res.status(200).json(userList);
+    } catch (error) {
+        next(error)
     }
 }
