@@ -6,7 +6,7 @@ export default function NewList() {
     const { user } = useSelector(state => state.user);
 
     return user ?
-        <ListForm title={"New Property Listing : )"} />
+        <ListForm title={"New Property Listing : )"} method={"post"} />
         :
         <Navigate to={"/sign-in"} />
 }

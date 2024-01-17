@@ -1,24 +1,45 @@
-import { Form } from "react-router-dom";
+import { Form, redirect, useActionData, useNavigation, useSubmit } from "react-router-dom";
 import Input from "./Input";
 import Button from "./Button";
 import { useState } from "react";
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import { app } from '../firebase.js';
+import { useSelector } from "react-redux";
 
-export default function ListForm({ title }) {
-    const [files, setFiles] = useState([]);
-    const [formData, setFormData] = useState({
-        imageUrls: []
-    });
+export default function ListForm({ title, method, listData }) {
+    const { user } = useSelector(state => state.user);
+
     const initialUploadInfo = {
         isUploading: false,
         uploadError: false
     }
+    const initialListData = {
+        userRef: user?.id,
+        name: "",
+        description: "",
+        address: "",
+        type: "sale",
+        parking: false,
+        furnished: false,
+        offer: false,
+        bedrooms: 0,
+        bathrooms: 0,
+        regularPrice: 0,
+        discountPrice: 0,
+        imageUrls: []
+    }
+    const submit = useSubmit();
+    const navigation = useNavigation();
+    const data = useActionData();
+    const [error, setError] = useState(null);
+    const [files, setFiles] = useState([]);
+    const [formData, setFormData] = useState(initialListData);
     const [uploadInfo, setUploadInfo] = useState(initialUploadInfo);
+
+    const isSumbitting = navigation.state === "submitting";
+
     function handleImageUpload() {
-        console.log("hello", formData, files)
         if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
-            console.log("running")
             setUploadInfo({ ...uploadInfo, isUploading: true })
             const promises = [];
             for (let i = 0; i < files.length; i++) {
@@ -32,8 +53,7 @@ export default function ListForm({ title }) {
                 .catch(error => setUploadInfo({ isUploading: false, uploadError: error }));
 
         } else {
-            console.log("not running");
-            setUploadInfo({ isUploading: false, uploadError: "Min image required, Max upto 6 images" })
+            setUploadInfo({ isUploading: false, uploadError: "Min image required, Max upto 6 images" });
         }
     }
 
@@ -61,26 +81,46 @@ export default function ListForm({ title }) {
         })
     };
 
+    function handleChange(e) {
+        const { name, value } = e.target;
+        if (name === "sale" || name === "rent") {
+            setFormData({ ...formData, type: name });
+        } else if (name === "parking" || name === "furnished" || name === "offer") {
+            setFormData({ ...formData, [name]: e.target.checked });
+        } else {
+            setFormData({ ...formData, [name]: value });
+        }
+    }
+
+    function handleSumbit(e) {
+        error && setError(null);
+        e.preventDefault();
+        if (formData.imageUrls < 1) {
+            return setError("Upload atleast one image of the property");
+        }
+        submit(formData, { method });
+    }
+
     return (
         <main className="p-4 mx-auto max-w-4xl md:max-w-5xl border shadow-lg my-7 rounded-lg">
             <h1 className="text-3xl text-center mb-7 font-semibold">{title}</h1>
-            <Form className="flex gap-4 flex-col sm:flex-row">
+            <Form onSubmit={handleSumbit} className="flex gap-4 flex-col sm:flex-row">
                 <div className="flex flex-col gap-4 flex-1">
-                    <Input type="text" placeholder="Property Name" id="name" name="name" required />
-                    <Input textarea={true} placeholder="Description..." id='description' name="description" required />
-                    <Input type='text' placeholder='Address ...' id='address' name='address' required />
+                    <Input onChange={handleChange} defaultValue={listData ? listData.name : ""} type="text" placeholder="Property Name" id="name" name="name" required />
+                    <Input onChange={handleChange} defaultValue={listData ? listData.description : ""} textarea={true} placeholder="Description..." id='description' name="description" required />
+                    <Input onChange={handleChange} defaultValue={listData ? listData.address : ""} type='text' placeholder='Address ...' id='address' name='address' required />
                     <div className="flex gap-6 flex-wrap">
-                        <Input checkBox={true} labelName='Sell' id='sale' />
-                        <Input checkBox={true} labelName='Rent' id='rent' />
-                        <Input checkBox={true} labelName='Parking Spot' id='parking' />
-                        <Input checkBox={true} labelName='Furnished' id='furnished' />
-                        <Input checkBox={true} labelName='Offer' id='offer' />
+                        <Input onChange={handleChange} defaultValue={listData ? listData.type : ""} checkBox={true} checked={formData.type && formData.type === "sale"} labelName='Sell' id='sale' name='sale' />
+                        <Input onChange={handleChange} defaultValue={listData ? listData.type : ""} checkBox={true} checked={formData.type && formData.type === "rent"} labelName='Rent' id='rent' name="rent" />
+                        <Input onChange={handleChange} defaultValue={listData ? listData.parking : ""} checkBox={true} labelName='Parking Spot' id='parking' name="parking" />
+                        <Input onChange={handleChange} defaultValue={listData ? listData.furnished : ""} checkBox={true} labelName='Furnished' id='furnished' name="furnished" />
+                        <Input onChange={handleChange} defaultValue={listData ? listData.offer : ""} checkBox={true} labelName='Offer' id='offer' name="offer" />
                     </div>
                     <div className="flex gap-6 flex-wrap">
-                        <Input labeledInput={true} type='number' labelName='Beds' id='bedrooms' name='bedrooms' required />
-                        <Input labeledInput={true} type='number' labelName='Baths' id='bathrooms' name='bathrooms' required />
-                        <Input labeledInput={true} type='number' labelName='Regular Price' id='regularPrice' name='regularPrice' required />
-                        <Input labeledInput={true} type='number' labelName='Offer Price' id='offerPrice' name='offerPrice' required />
+                        <Input onChange={handleChange} defaultValue={listData ? listData.beds : ""} labeledInput={true} type='number' labelName='Beds' id='bedrooms' name='bedrooms' required />
+                        <Input onChange={handleChange} defaultValue={listData ? listData.baths : ""} labeledInput={true} type='number' labelName='Baths' id='bathrooms' name='bathrooms' required />
+                        <Input onChange={handleChange} defaultValue={listData ? listData.regularPrice : ""} labeledInput={true} type='number' min={0} labelName={`Regular Price ${formData.type === "rent" ? "(₹/month)" : ""}`} id='regularPrice' name='regularPrice' required />
+                        {formData.offer && <Input onChange={handleChange} defaultValue={listData ? listData.offerPrice : ""} labeledInput={true} min={0} type='number' labelName={`Discount Price ${formData.type === "rent" ? "(₹/month)" : ""}`} id='discountPrice' name='discountPrice' required />}
                     </div>
                 </div>
                 <div className="flex flex-col gap-4 flex-1">
@@ -98,15 +138,40 @@ export default function ListForm({ title }) {
                     {
                         formData.imageUrls.length > 0 &&
                         formData.imageUrls.map(url =>
-                            <div key={url} className="flex justify-between items-center p-3 border rounded-lg shadow-md">
+                            <div key={url} className="flex justify-between items-center p-3 border rounded-lg hover:shadow-md">
                                 <img src={url} alt="Estate image" className="w-40 h-40 object-cover rounded-xl" />
                                 <p className="self-start text-xl font-bold text-red-700 cursor-pointer transition-all hover:scale-x-125">X</p>
                             </div>
                         )
                     }
-                    <Button disabled={uploadInfo.isUploading} primaryColor={true}>Create</Button>
+                    <Button type="submit" disabled={uploadInfo.isUploading || isSumbitting} primaryColor={true}>Create</Button>
+                    {(error || data ) && <p className="text-red-700 text-md">{error || data.message}</p>}
                 </div>
             </Form>
         </main>
     )
+}
+
+export const listAction = async ({ request }) => {
+    if (request.method === "POST") {
+        const data = await request.formData();
+        console.log(data);
+        const userData = {}
+        data.forEach((value, key) => userData[key] = value);
+        console.log(userData);
+        const response = await fetch("/jd/list/create", {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(userData)
+        });
+
+        if (response.status === 201) {
+            return redirect('/profile')
+        } else {
+            return response;
+        };
+    }
+
 }
