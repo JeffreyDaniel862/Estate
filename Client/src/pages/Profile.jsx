@@ -6,6 +6,8 @@ import { app } from '../firebase.js';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
 import { useEffect, useRef, useState } from "react";
 import { userAction } from "../store/userSlice.js";
+import { useQuery } from "@tanstack/react-query";
+import UserList from "../components/UserList.jsx";
 
 export default function Profile() {
 
@@ -20,13 +22,18 @@ export default function Profile() {
     const [file, setFile] = useState(undefined);
     const [uploadData, setUploadData] = useState(initialUploadData);
     const [formData, setFormData] = useState({ id: user?.id });
+    const [showList, setShowList] = useState(false);
     const submit = useSubmit();
     const data = useActionData();
     const dispatch = useDispatch();
     const Navigation = useNavigation();
     const navigate = useNavigate();
     const fetcher = useFetcher();
-
+    const { data: listData, isLoading, isError, error } = useQuery({
+        queryKey: ["userList"],
+        queryFn: () => fetchUserList(user?.id),
+        staleTime: 60000
+    });
     const { data: deleteData, state } = fetcher;
     const isDeleting = state === "submitting";
 
@@ -100,6 +107,10 @@ export default function Profile() {
         if (proceed) fetcher.submit({ id: user.id }, { method: "DELETE", action: "/delete" });
     }
 
+    const handleShowList = () => {
+        setShowList(prevOption => !prevOption);
+    }
+
     let content = ''
 
     if (uploadData.isUploading) {
@@ -152,6 +163,10 @@ export default function Profile() {
                     <p className={`text-center my-3 ${data.success ? 'text-green-500' : 'text-red-500'}`}>{data.success ? "Success" : data.message}</p>
                 </div>
             }
+            <Button onClick={handleShowList} type="button" className={"text-green-700 w-full lowercase"}>{showList? "Hide" : "Show"} listing</Button>
+            {
+                !isLoading && showList && <UserList listData={listData} />
+            }
         </div>
     )
 }
@@ -191,11 +206,24 @@ export const deleteAction = async ({ request }) => {
     const data = await request.formData();
     const id = data.get('id');
     try {
-        const response = await fetch(`jd/auth/delete/${id}`, {
+        const response = await fetch(`jd/user/delete/${id}`, {
             method: "DELETE"
         });
         return response;
     } catch (error) {
         console.log(error);
     }
+}
+
+export const fetchUserList = async (id) => {
+    const response = await fetch("/jd/user/list/" + id);
+
+    if (!response.ok) {
+        const error = new Error("Error while fetching property list");
+        error.status = response.status;
+        error.info = await response.json();
+        throw error;
+    }
+    const data = await response.json();
+    return data
 }

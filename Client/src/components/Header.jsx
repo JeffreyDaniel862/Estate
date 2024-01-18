@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import { FaCross } from "react-icons/fa";
 
 export default function Header() {
 
@@ -10,9 +11,9 @@ export default function Header() {
         <header className="bg-slate-200 shadow-md">
             <nav className="flex items-center justify-between p-3 max-w-6xl mx-auto">
                 <Link to="/">
-                    <h1 className="font-bold text-sm sm:text-xl flex flex-wrap">
+                    <h1 className="font-bold text-sm sm:text-xl flex flex-wrap items-center">
                         <span className="text-slate-400">Jeffrey</span>
-                        <span className="text-slate-600">Daniel</span>
+                        <span className="text-slate-600"><FaCross /></span>
                     </h1>
                 </Link>
                 <form className="bg-slate-100 rounded-lg p-3 flex items-center">
