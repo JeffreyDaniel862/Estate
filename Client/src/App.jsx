@@ -7,7 +7,8 @@ import Profile, { deleteAction, profileUpdateAction } from "./pages/Profile.jsx"
 import RootLayout from "./pages/RootLayout";
 import NewList from "./pages/NewList.jsx";
 import { listAction } from "./components/ListForm.jsx";
-import { QueryClientProvider, QueryClient } from "@tanstack/react-query"
+import { QueryClientProvider } from "@tanstack/react-query"
+import { queryClient } from "./utils/http.js";
 
 const router = createBrowserRouter([
   {
@@ -24,8 +25,6 @@ const router = createBrowserRouter([
     ]
   },
 ])
-
-const queryClient = new QueryClient();
 
 export default function App() {
   return (

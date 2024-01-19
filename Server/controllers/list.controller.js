@@ -1,4 +1,5 @@
 import List from "../models/list.model.js";
+import { errorHandler } from "../utils/errorHandler.js";
 
 export const createList = async (req, res, next) => {
     try {
@@ -8,3 +9,18 @@ export const createList = async (req, res, next) => {
         next(error);
     }
 };
+
+export const deleteList = async (req, res, next) => {
+    try {
+        const property = await List.findById(req.params.id);
+
+        if (!property) return next(errorHandler(404, "Property not found"));
+
+        if (req.user.id !== property.userRef) return next(errorHandler(401, "Unauthorized to delete"));
+
+        await List.findByIdAndDelete(req.params.id);
+        res.status(200).json("Property deleted successfully");
+    } catch (error) {
+        next(error);
+    }
+}

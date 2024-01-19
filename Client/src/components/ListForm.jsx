@@ -155,10 +155,8 @@ export default function ListForm({ title, method, listData }) {
 export const listAction = async ({ request }) => {
     if (request.method === "POST") {
         const data = await request.formData();
-        console.log(data);
         const userData = {}
         data.forEach((value, key) => userData[key] = value);
-        console.log(userData);
         const response = await fetch("/jd/list/create", {
             method: "post",
             headers: {

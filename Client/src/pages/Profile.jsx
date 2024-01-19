@@ -31,8 +31,7 @@ export default function Profile() {
     const fetcher = useFetcher();
     const { data: listData, isLoading, isError, error } = useQuery({
         queryKey: ["userList"],
-        queryFn: () => fetchUserList(user?.id),
-        staleTime: 60000
+        queryFn: () => fetchUserList(user?.id)
     });
     const { data: deleteData, state } = fetcher;
     const isDeleting = state === "submitting";
@@ -165,7 +164,7 @@ export default function Profile() {
             }
             <Button onClick={handleShowList} type="button" className={"text-green-700 w-full lowercase"}>{showList? "Hide" : "Show"} listing</Button>
             {
-                !isLoading && showList && <UserList listData={listData} />
+                !isLoading && showList && (isError? <p className="text-red-700 text-center">{error && error.info?.message || "Unable to fetch user's properties"}</p> : <UserList listData={listData} />)
             }
         </div>
     )
