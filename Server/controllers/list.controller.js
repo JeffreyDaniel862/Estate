@@ -24,3 +24,17 @@ export const deleteList = async (req, res, next) => {
         next(error);
     }
 }
+
+export const updateList = async (req, res, next) => {
+    try {
+        const property = await List.findById(req.params.id);
+        if(!property) return next(errorHandler(404, "Property Not found"));
+
+        if(req.user.id !== property.userRef) return next(errorHandler(401, "Unauthorized to Update"));
+
+        const updatedList = await List.findByIdAndUpdate(req.params.id, req.body, {new: true});
+        res.status(200).json(updatedList);
+    } catch (error) {
+        next(error);
+    }
+}
