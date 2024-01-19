@@ -12,8 +12,9 @@ export default function Header() {
             <nav className="flex items-center justify-between p-3 max-w-6xl mx-auto">
                 <Link to="/">
                     <h1 className="font-bold text-sm sm:text-xl flex flex-wrap items-center">
-                        <span className="text-slate-400">Jeffrey</span>
+                        <span className="text-slate-400">J</span>
                         <span className="text-slate-600"><FaCross /></span>
+                        <span className="text-slate-400">D</span>
                     </h1>
                 </Link>
                 <form className="bg-slate-100 rounded-lg p-3 flex items-center">

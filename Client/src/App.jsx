@@ -9,6 +9,7 @@ import NewList from "./pages/NewList.jsx";
 import { listAction } from "./components/ListForm.jsx";
 import { QueryClientProvider } from "@tanstack/react-query"
 import { queryClient } from "./utils/http.js";
+import EditList, { listLoader } from "./pages/EditList.jsx";
 
 const router = createBrowserRouter([
   {
@@ -19,8 +20,14 @@ const router = createBrowserRouter([
       { path: 'sign-up', element: <SignUp />, action: signupAction },
       { path: 'sign-in', element: <SignIn />, action: signinAction },
       { path: 'about', element: <About /> },
-      { path: 'profile', element: <Profile />, action: profileUpdateAction },
-      { path: 'list', element: <NewList />, action: listAction },
+      {
+        path: 'profile',
+        children: [
+          {index: true , element: <Profile />, action: profileUpdateAction},
+          {path: 'create-list', element: <NewList />, action: listAction },
+          {path: "edit-list/:id", element: <EditList />, loader: listLoader, action: listAction}
+        ]
+      },
       { path: 'delete', action: deleteAction }
     ]
   },

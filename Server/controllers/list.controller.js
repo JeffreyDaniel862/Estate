@@ -38,3 +38,15 @@ export const updateList = async (req, res, next) => {
         next(error);
     }
 }
+
+export const getList = async (req, res, next) => {
+    try {
+        const property = await List.findById(req.params.id);
+        if(!property) return next(errorHandler(404, "Property Not found"));
+        
+        res.status(200).json(property);
+
+    } catch (error) {
+        next(error);
+    }
+}

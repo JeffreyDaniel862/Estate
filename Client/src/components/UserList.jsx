@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { FaTrash, FaEdit } from "react-icons/fa";
 import { queryClient } from "../utils/http";
+import { Link } from "react-router-dom";
 
 export default function UserList({ listData }) {
 
@@ -27,7 +28,9 @@ export default function UserList({ listData }) {
                         <p className="text-lg font-semibold">{list.name}</p>
                         <div className="flex flex-col items-center justify-between min-h-24 h-full">
                             <p onClick={() => handleDelete(list._id)} className="self-start text-xl font-bold text-red-700 cursor-pointer transition-all hover:scale-y-125"><FaTrash /></p>
-                            <p className="self-end text-xl font-bold text-green-700 cursor-pointer transition-all hover:scale-y-125"><FaEdit /></p>
+                            <p className="self-end text-xl font-bold text-green-700 cursor-pointer transition-all hover:scale-y-125">
+                                <Link to={`edit-list/${list._id}`}><FaEdit /></Link>
+                            </p>
                         </div>
                     </div>
                     {

@@ -149,7 +149,7 @@ export default function Profile() {
                 <Input type='email' defaultValue={user.email} onChange={handleChange} id='email' name='email' />
                 <Input type='password' placeholder="password" onChange={handleChange} id='password' name='password' />
                 <Button disabled={isUpdating} primaryColor={true} type="submit">{isUpdating ? "Updating..." : "Update"}</Button>
-                <Link to={"/list"}>
+                <Link to={"create-list"}>
                     <Button type="button" className="bg-green-700 w-full text-white transition-all hover:bg-green-800 hover:-translate-y-1">Create Listing</Button>
                 </Link>
             </Form>

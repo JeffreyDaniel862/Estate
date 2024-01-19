@@ -1,7 +1,7 @@
 import { Form, redirect, useActionData, useNavigation, useSubmit } from "react-router-dom";
 import Input from "./Input";
 import Button from "./Button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import { app } from '../firebase.js';
 import { useSelector } from "react-redux";
@@ -38,6 +38,13 @@ export default function ListForm({ title, method, listData }) {
 
     const isSumbitting = navigation.state === "submitting";
 
+    useEffect(() => {
+        if (listData) {
+            const { __v, updatedAt, createdAt, _id: someid, userRef: someRef, ...propertyData } = listData;
+            setFormData(propertyData);
+        }
+    }, [])
+
     function handleImageUpload() {
         if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
             setUploadInfo({ ...uploadInfo, isUploading: true })
@@ -47,7 +54,8 @@ export default function ListForm({ title, method, listData }) {
             }
             Promise.all(promises)
                 .then(urls => {
-                    setFormData({ ...formData, imageUrls: formData.imageUrls.concat(urls) });
+                    console.log(urls);
+                    setFormData({ ...formData, imageUrls: [...formData.imageUrls, ...urls] });
                     setUploadInfo(initialUploadInfo);
                 })
                 .catch(error => setUploadInfo({ isUploading: false, uploadError: error }));
@@ -93,12 +101,12 @@ export default function ListForm({ title, method, listData }) {
     }
 
     function handleSumbit(e) {
-        error && setError(null);
+        // error && setError(null);
         e.preventDefault();
-        if (formData.imageUrls < 1) {
+        if (formData.imageUrls.length < 1) {
             return setError("Upload atleast one image of the property");
         }
-        submit(formData, { method });
+        submit(formData, { method: method });
     }
 
     return (
@@ -112,15 +120,15 @@ export default function ListForm({ title, method, listData }) {
                     <div className="flex gap-6 flex-wrap">
                         <Input onChange={handleChange} defaultValue={listData ? listData.type : ""} checkBox={true} checked={formData.type && formData.type === "sale"} labelName='Sell' id='sale' name='sale' />
                         <Input onChange={handleChange} defaultValue={listData ? listData.type : ""} checkBox={true} checked={formData.type && formData.type === "rent"} labelName='Rent' id='rent' name="rent" />
-                        <Input onChange={handleChange} defaultValue={listData ? listData.parking : ""} checkBox={true} labelName='Parking Spot' id='parking' name="parking" />
-                        <Input onChange={handleChange} defaultValue={listData ? listData.furnished : ""} checkBox={true} labelName='Furnished' id='furnished' name="furnished" />
-                        <Input onChange={handleChange} defaultValue={listData ? listData.offer : ""} checkBox={true} labelName='Offer' id='offer' name="offer" />
+                        <Input onChange={handleChange} defaultValue={listData ? listData.parking : ""} checkBox={true} checked={formData.parking} labelName='Parking Spot' id='parking' name="parking" />
+                        <Input onChange={handleChange} defaultValue={listData ? listData.furnished : ""} checkBox={true} checked={formData.furnished} labelName='Furnished' id='furnished' name="furnished" />
+                        <Input onChange={handleChange} defaultValue={listData ? listData.offer : ""} checkBox={true} checked={formData.offer} labelName='Offer' id='offer' name="offer" />
                     </div>
                     <div className="flex gap-6 flex-wrap">
-                        <Input onChange={handleChange} defaultValue={listData ? listData.beds : ""} labeledInput={true} type='number' labelName='Beds' id='bedrooms' name='bedrooms' required />
-                        <Input onChange={handleChange} defaultValue={listData ? listData.baths : ""} labeledInput={true} type='number' labelName='Baths' id='bathrooms' name='bathrooms' required />
+                        <Input onChange={handleChange} defaultValue={listData ? listData.bedrooms : ""} labeledInput={true} type='number' labelName='Beds' id='bedrooms' name='bedrooms' required />
+                        <Input onChange={handleChange} defaultValue={listData ? listData.bathrooms : ""} labeledInput={true} type='number' labelName='Baths' id='bathrooms' name='bathrooms' required />
                         <Input onChange={handleChange} defaultValue={listData ? listData.regularPrice : ""} labeledInput={true} type='number' min={0} labelName={`Regular Price ${formData.type === "rent" ? "(₹/month)" : ""}`} id='regularPrice' name='regularPrice' required />
-                        {formData.offer && <Input onChange={handleChange} defaultValue={listData ? listData.offerPrice : ""} labeledInput={true} min={0} type='number' labelName={`Discount Price ${formData.type === "rent" ? "(₹/month)" : ""}`} id='discountPrice' name='discountPrice' required />}
+                        {formData.offer && <Input onChange={handleChange} defaultValue={listData ? listData.discountPrice : ""} labeledInput={true} min={0} type='number' labelName={`Discount Price ${formData.type === "rent" ? "(₹/month)" : ""}`} id='discountPrice' name='discountPrice' required />}
                     </div>
                 </div>
                 <div className="flex flex-col gap-4 flex-1">
@@ -144,19 +152,20 @@ export default function ListForm({ title, method, listData }) {
                             </div>
                         )
                     }
-                    <Button type="submit" disabled={uploadInfo.isUploading || isSumbitting} primaryColor={true}>Create</Button>
-                    {(error || data ) && <p className="text-red-700 text-md">{error || data.message}</p>}
+                    <Button type="submit" disabled={uploadInfo.isUploading || isSumbitting} primaryColor={true}>{method === "patch" ? "Update" : "Create"}</Button>
+                    {(error || data) && <p className="text-red-700 text-md">{error || data.message}</p>}
                 </div>
             </Form>
         </main>
     )
 }
 
-export const listAction = async ({ request }) => {
+export const listAction = async ({ request, params }) => {
     if (request.method === "POST") {
         const data = await request.formData();
         const userData = {}
         data.forEach((value, key) => userData[key] = value);
+        userData.imageUrls = userData.imageUrls.split(",");
         const response = await fetch("/jd/list/create", {
             method: "post",
             headers: {
@@ -166,6 +175,26 @@ export const listAction = async ({ request }) => {
         });
 
         if (response.status === 201) {
+            return redirect('/profile')
+        } else {
+            return response;
+        };
+    }
+
+    if (request.method === "PATCH") {
+        const data = await request.formData();
+        const userData = {}
+        data.forEach((value, key) => userData[key] = value);
+        userData.imageUrls = userData.imageUrls.split(",");
+        userData.discountPrice = userData.offer=== "true"? userData.discountPrice : 0
+        const response = await fetch(`/jd/list/update/${params.id}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(userData)
+        });
+        if (response.status === 200) {
             return redirect('/profile')
         } else {
             return response;
