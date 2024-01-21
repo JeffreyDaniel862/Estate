@@ -4,9 +4,9 @@ import { errorHandler } from "../utils/errorHandler.js";
 import bcryptjs from 'bcryptjs';
 
 export const updateUser = async (req, res, next) => {
-    if(req.user.id !== req.params.id ) return next(errorHandler(401, "Unauthorized to update account!!"));
+    if (req.user.id !== req.params.id) return next(errorHandler(401, "Unauthorized to update account!!"));
     try {
-        if(req.body.password){
+        if (req.body.password) {
             req.body.password = bcryptjs.hashSync(req.body.password, 10);
         }
         const updatedUser = await User.findByIdAndUpdate(req.params.id, {
@@ -16,8 +16,8 @@ export const updateUser = async (req, res, next) => {
                 password: req.body.password,
                 avatar: req.body.avatar
             }
-        }, {new: true});
-        
+        }, { new: true });
+
         res.status(200).json({
             id: updatedUser._id,
             success: true,
@@ -31,23 +31,40 @@ export const updateUser = async (req, res, next) => {
 }
 
 export const deleteUser = async (req, res, next) => {
-    if(req.user.id !== req.params.id) return next(errorHandler(401, "Unauthorized to delete user account"));
+    if (req.user.id !== req.params.id) return next(errorHandler(401, "Unauthorized to delete user account"));
 
     try {
         await User.findByIdAndDelete(req.params.id);
-        res.clearCookie('access_token').status(200).json({success: true, message: "User account is deleted"});
+        res.clearCookie('access_token').status(200).json({ success: true, message: "User account is deleted" });
     } catch (error) {
         next(error);
     }
 }
 
 export const userList = async (req, res, next) => {
-    if(req.user.id !== req.params.id) return next(errorHandler(401, "Unauthorized to view listing"));
+    if (req.user.id !== req.params.id) return next(errorHandler(401, "Unauthorized to view listing"));
 
     try {
-        const userList = await List.find({userRef: req.params.id});
+        const userList = await List.find({ userRef: req.params.id });
         res.status(200).json(userList);
     } catch (error) {
         next(error)
+    }
+}
+
+export const getUserDetails = async (req, res, next) => {
+    try {
+        const userDetails = await User.findById(req.params.id);
+
+        if(!userDetails) return next(errorHandler(404, "Not found"));
+
+        const userInfo = {
+            username: userDetails.username,
+            email: userDetails.email,
+            avatar: userDetails.avatar
+        }
+        res.status(200).json(userInfo);
+    } catch (error) {
+        next(error);
     }
 }

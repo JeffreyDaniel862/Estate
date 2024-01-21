@@ -6,10 +6,19 @@ import 'swiper/css/bundle';
 import { FaBath, FaBed, FaChair, FaMapMarkerAlt, FaParking, FaTag } from "react-icons/fa";
 import Pins from "../components/Pins";
 import Button from "../components/Button";
+import { useSelector } from "react-redux";
+import { useState } from "react";
+import Contact from "../components/Contact";
 
 export default function List() {
     SwiperCore.use([Navigation]);
     const listData = useLoaderData();
+    const { user } = useSelector(state => state.user);
+    const [isContact, setIsContact] = useState(false);
+    console.log(listData);
+    function handleCancelContact(){
+        setIsContact(false);
+    }
     return <div>
         <Swiper navigation>
             {listData.imageUrls.map(url => <SwiperSlide key={url}>
@@ -36,7 +45,13 @@ export default function List() {
                 <Pins className="whitespace-nowrap font-semibold text-sky-700"><FaChair className="text-xl" /> {listData.furnished ? "Furnished" : "Not furnished"}</Pins>
             </div>
             <div className="flex w-full">
-                <Button className=" my-5 w-full sm:w-1/2 mx-auto hover:bg-red-700 hover:shadow-lg " animate={true} secondaryColor={true}>Contact Owner</Button>
+                {
+                    user && (
+                        !isContact ? 
+                        <Button onClick= {() => setIsContact(true)} className=" my-5 w-full sm:w-1/2 mx-auto hover:bg-red-700 hover:shadow-lg " animate={true} secondaryColor={true}>Contact Owner</Button>
+                        : <Contact listData={listData} cancel={handleCancelContact} /> 
+                    )
+                }
             </div>
         </div>
     </div>
