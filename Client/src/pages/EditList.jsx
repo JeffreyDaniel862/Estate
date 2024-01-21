@@ -12,12 +12,16 @@ export default function EditList() {
 }
 
 export const listLoader = async ({ request, params }) => {
-    const response = await fetch("/jd/list/view/" + params.id);
-    if (!response.ok) {
-        console.log(await response.json());
-        const errorData = await response.json();
-        throw json({ message: errorData.message || "Unable to fetch data" }, { status: errorData.status || 500 })
+    try {
+        const response = await fetch("/jd/list/view/" + params.id);
+        if (!response.ok) {
+            console.log(await response.json());
+            const errorData = await response.json();
+            throw json({ message: errorData.message || "Unable to fetch data" }, { status: errorData.status || 500 })
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        throw json({message: "Bad Request"}, {status: 400})
     }
-    const data = await response.json();
-    return data;
 }

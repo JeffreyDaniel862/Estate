@@ -17,8 +17,8 @@ export default function Header() {
                         <span className="text-slate-400">D</span>
                     </h1>
                 </Link>
-                <form className="bg-slate-100 rounded-lg p-3 flex items-center">
-                    <input id="search" type="text" placeholder="search..." className="bg-transparent w-24 sm:w-64 focus:outline-none" />
+                <form className="bg-slate-100 rounded-lg p-2 sm:p-3 flex items-center">
+                    <input id="search" type="text" placeholder="search..." className="bg-transparent w-36 sm:w-64 focus:outline-none" />
                     <FaSearch className="text-slate-600" />
                 </form>
                 <ul className="flex gap-4 items-center">

@@ -10,11 +10,14 @@ import { listAction } from "./components/ListForm.jsx";
 import { QueryClientProvider } from "@tanstack/react-query"
 import { queryClient } from "./utils/http.js";
 import EditList, { listLoader } from "./pages/EditList.jsx";
+import List from "./pages/List.jsx";
+import ErrorPage from "./pages/Error.jsx";
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <RootLayout />,
+    errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Home /> },
       { path: 'sign-up', element: <SignUp />, action: signupAction },
@@ -28,6 +31,7 @@ const router = createBrowserRouter([
           {path: "edit-list/:id", element: <EditList />, loader: listLoader, action: listAction}
         ]
       },
+      {path: "/list/:id", element: <List />, loader: listLoader},
       { path: 'delete', action: deleteAction }
     ]
   },

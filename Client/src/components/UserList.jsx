@@ -25,7 +25,7 @@ export default function UserList({ listData }) {
                 <div className="p-3 border rounded-lg hover:shadow-lg" key={list._id}>
                     <div className="flex gap-4 items-center justify-between">
                         <img className="w-40 h-40 object-cover rounded-lg transition-all hover:scale-110" src={list.imageUrls[0]} alt="property image" />
-                        <p className="text-lg font-semibold">{list.name}</p>
+                        <p className="text-lg font-semibold hover:underline"><Link to={`/list/${list._id}`}>{list.name}</Link></p>
                         <div className="flex flex-col items-center justify-between min-h-24 h-full">
                             <p onClick={() => handleDelete(list._id)} className="self-start text-xl font-bold text-red-700 cursor-pointer transition-all hover:scale-y-125"><FaTrash /></p>
                             <p className="self-end text-xl font-bold text-green-700 cursor-pointer transition-all hover:scale-y-125">

@@ -1,10 +1,11 @@
-import { Form, redirect, useActionData, useNavigation, useSubmit } from "react-router-dom";
+import { Form, Link, redirect, useActionData, useNavigation, useSubmit } from "react-router-dom";
 import Input from "./Input";
 import Button from "./Button";
 import { useEffect, useState } from "react";
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import { app } from '../firebase.js';
 import { useSelector } from "react-redux";
+import { FaArrowLeft } from "react-icons/fa";
 
 export default function ListForm({ title, method, listData }) {
     const { user } = useSelector(state => state.user);
@@ -111,6 +112,7 @@ export default function ListForm({ title, method, listData }) {
 
     return (
         <main className="p-4 mx-auto max-w-4xl md:max-w-5xl border shadow-lg my-7 rounded-lg">
+           <Link to={".."}> <FaArrowLeft className="text-red-700 text-lg transition-all hover:scale-x-125 delay-200" /></Link>
             <h1 className="text-3xl text-center mb-7 font-semibold">{title}</h1>
             <Form onSubmit={handleSumbit} className="flex gap-4 flex-col sm:flex-row">
                 <div className="flex flex-col gap-4 flex-1">
