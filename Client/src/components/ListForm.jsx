@@ -104,6 +104,9 @@ export default function ListForm({ title, method, listData }) {
     function handleSumbit(e) {
         // error && setError(null);
         e.preventDefault();
+        if(formData.regularPrice < formData.discountPrice){
+            return setError("Discount price must be less than regular price");
+        }
         if (formData.imageUrls.length < 1) {
             return setError("Upload atleast one image of the property");
         }
