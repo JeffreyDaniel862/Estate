@@ -15,7 +15,6 @@ export default function List() {
     const listData = useLoaderData();
     const { user } = useSelector(state => state.user);
     const [isContact, setIsContact] = useState(false);
-    console.log(listData);
     function handleCancelContact(){
         setIsContact(false);
     }
@@ -46,7 +45,7 @@ export default function List() {
             </div>
             <div className="flex w-full">
                 {
-                    user && (
+                    user && user.id !== listData.userRef && (
                         !isContact ? 
                         <Button onClick= {() => setIsContact(true)} className=" my-5 w-full sm:w-1/2 mx-auto hover:bg-red-700 hover:shadow-lg " animate={true} secondaryColor={true}>Contact Owner</Button>
                         : <Contact listData={listData} cancel={handleCancelContact} /> 
