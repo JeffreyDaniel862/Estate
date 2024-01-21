@@ -32,6 +32,7 @@ const router = createBrowserRouter([
         ]
       },
       {path: "/list/:id", element: <List />, loader: listLoader},
+      {path: "/search"},
       { path: 'delete', action: deleteAction }
     ]
   },
