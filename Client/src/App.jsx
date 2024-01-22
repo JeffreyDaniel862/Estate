@@ -12,6 +12,7 @@ import { queryClient } from "./utils/http.js";
 import EditList, { listLoader } from "./pages/EditList.jsx";
 import List from "./pages/List.jsx";
 import ErrorPage from "./pages/Error.jsx";
+import Search from "./pages/Search.jsx";
 
 const router = createBrowserRouter([
   {
@@ -32,7 +33,7 @@ const router = createBrowserRouter([
         ]
       },
       {path: "/list/:id", element: <List />, loader: listLoader},
-      {path: "/search"},
+      {path: "/search", element: <Search />},
       { path: 'delete', action: deleteAction }
     ]
   },

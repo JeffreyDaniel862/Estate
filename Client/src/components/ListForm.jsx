@@ -200,7 +200,7 @@ export const listAction = async ({ request, params }) => {
             body: JSON.stringify(userData)
         });
         if (response.status === 200) {
-            return redirect('/profile')
+            return redirect('/profile');
         } else {
             return response;
         };
