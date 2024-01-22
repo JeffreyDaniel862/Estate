@@ -8,7 +8,7 @@ import Card from "../components/Card";
 export default function Search() {
 
     const navigate = useNavigate();
-
+    const [showMore, setShowMore] = useState(false);
     const [formData, setFormData] = useState({
         searchTerm: "",
         type: "all",
@@ -24,7 +24,6 @@ export default function Search() {
         error: null,
         data: []
     })
-    console.log(dataInfo);
     useEffect(() => {
         const urlParams = new URLSearchParams(location.search);
         const paramsObj = {};
@@ -40,11 +39,14 @@ export default function Search() {
         const getData = async () => {
             setDataInfo({ ...dataInfo, isLoading: true });
             const searchQuery = urlParams.toString();
-            const response = await fetch("/jd/list/get/?" + searchQuery);
+            const response = await fetch("/jd/list/get?" + searchQuery);
             const data = await response.json();
             if (!response.ok) {
                 return setDataInfo({ ...dataInfo, isLoading: false, error: data })
             }
+            if (data.length > 8) {
+                setShowMore(true);
+            } 
             setDataInfo({ ...dataInfo, isLoading: false, data: data });
         }
 
@@ -80,6 +82,22 @@ export default function Search() {
         urlParams.set('order', formData.order);
         const searchParams = urlParams.toString();
         navigate(`/search?${searchParams}`)
+    }
+
+    async function enableShowMore() {
+        const listNumber = dataInfo.data.length;
+        const startIndex = listNumber;
+        const urlParams = new URLSearchParams();
+        urlParams.set('startIndex', startIndex);
+        const searchParmas = urlParams.toString();
+        const res = await fetch("/jd/list/get?" + searchParmas);
+        const data1 = await res.json();
+        if (data1.length < 9) {
+            setShowMore(false);
+        }
+        if (res.ok) {
+            setDataInfo({ ...dataInfo, data: [...dataInfo.data, ...data1] });
+        }
     }
 
     return (
@@ -119,6 +137,7 @@ export default function Search() {
                     {!dataInfo.isLoading && dataInfo.data.length === 0 && <p className="text-sky-700 p-3 text-2xl">No List Found :(</p>}
                     {dataInfo.isLoading && <div className="w-full text-center"><Loading /></div>}
                 </div>
+                {showMore && <Button onClick={enableShowMore} secondaryColor={true} className={" m-3 "} >Show More</Button>}
             </div>
         </div>
     )
