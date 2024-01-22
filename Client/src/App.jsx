@@ -1,5 +1,5 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import Home from "./pages/Home";
+import Home, { getRentList } from "./pages/Home";
 import SignUp, { signupAction } from "./pages/SignUp";
 import SignIn, { signinAction } from "./pages/SignIn";
 import About from "./pages/About";
@@ -20,7 +20,7 @@ const router = createBrowserRouter([
     element: <RootLayout />,
     errorElement: <ErrorPage />,
     children: [
-      { index: true, element: <Home /> },
+      { index: true, element: <Home />, loader: getRentList },
       { path: 'sign-up', element: <SignUp />, action: signupAction },
       { path: 'sign-in', element: <SignIn />, action: signinAction },
       { path: 'about', element: <About /> },
