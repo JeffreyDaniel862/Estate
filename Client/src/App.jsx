@@ -23,7 +23,6 @@ const router = createBrowserRouter([
       { index: true, element: <Home />, loader: getRentList },
       { path: 'sign-up', element: <SignUp />, action: signupAction },
       { path: 'sign-in', element: <SignIn />, action: signinAction },
-      { path: 'about', element: <About /> },
       {
         path: 'profile',
         children: [

@@ -31,10 +31,10 @@ export default function Home() {
         <div>
             <div className="p-12 flex flex-col gap-4">
                 <h1 className="text-4xl text-sky-700 font-bold">
-                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Unde, alias.
+                    <span className="text-sky-400">Explore estate.</span> Find a New Home on the GO.
                 </h1>
                 <p className="text-lg text-slate-600">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod, nostrum possimus natus ipsa excepturi, earum eligendi, corrupti veritatis pariatur illum consequuntur cupiditate doloribus ut laboriosam?
+                    We help you find the best place to stay in anywhere in the world. Trusted Place to find home. 
                 </p>
                 <Link to={'/search'} className="text-green-500">
                     see more

@@ -21,7 +21,7 @@ export default function Header() {
     useEffect(() => {
         const urlParams = new URLSearchParams(location.search);
         const paramsSearchTerm = urlParams.get('searchTerm');
-        if(paramsSearchTerm){
+        if (paramsSearchTerm) {
             setSearchTerm(paramsSearchTerm)
         }
     }, [location.search]);
@@ -31,22 +31,23 @@ export default function Header() {
             <nav className="flex items-center justify-between p-3 max-w-6xl mx-auto">
                 <Link to="/">
                     <h1 className="font-bold text-sm sm:text-xl flex flex-wrap items-center">
-                        <span className="text-slate-400">J</span>
-                        <span className="text-slate-600"><FaCross /></span>
-                        <span className="text-slate-400">D</span>
+                        <span className="text-sky-400 text-sm sm:text-2xl">J</span>
+                        <span className="text-sky-600">Estate</span>
                     </h1>
                 </Link>
-                <form onSubmit={handleSubmit} className="bg-slate-100 rounded-lg p-2 sm:p-3 flex items-center">
+                <form onSubmit={handleSubmit} className="bg-slate-100 rounded-2xl p-2 sm:p-3 flex items-center">
                     <input onChange={e => setSearchTerm(e.target.value)} value={searchTerm} id="search" type="text" placeholder="search..." className="bg-transparent w-36 sm:w-64 focus:outline-none" />
                     <button type="submit"><FaSearch className="text-slate-600" /></button>
                 </form>
                 <ul className="flex gap-4 items-center">
                     <li className="text-slate-700 hidden sm:inline hover:underline"><Link to="/">Home</Link></li>
-                    <li className="text-slate-700 hidden sm:inline hover:underline"><Link to="/about">About</Link></li>
+                    {
+                        user && <li className="text-slate-700 hidden sm:inline hover:underline"><Link to="/profile">Profile</Link></li>
+                    }
                     <li className="text-slate-700 hover:underline">
                         {
                             user ?
-                                <Link to="/profile"><img className="rounded-full h-10 w-10 object-cover" src={user.avatar} alt="profile" /></Link>
+                                <img className="rounded-full h-10 w-10 object-cover" src={user.avatar} alt="profile" />
                                 : <Link to="/sign-in">Sign-In</Link>
                         }
                     </li>
