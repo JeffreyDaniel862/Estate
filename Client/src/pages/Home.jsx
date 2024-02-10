@@ -31,12 +31,12 @@ export default function Home() {
         <div>
             <div className="p-12 flex flex-col gap-4">
                 <h1 className="text-4xl text-sky-700 font-bold">
-                    <span className="text-sky-400">Explore estate.</span> Find a New Home on the GO.
+                    <span className="text-sky-900">Explore estate.</span> Find a New Home on the GO.
                 </h1>
                 <p className="text-lg text-slate-600">
                     We help you find the best place to stay in anywhere in the world. Trusted Place to find home. 
                 </p>
-                <Link to={'/search'} className="text-green-500">
+                <Link to={'/search'} className="text-green-700">
                     see more
                 </Link>
             </div>
@@ -47,7 +47,7 @@ export default function Home() {
                         saleList.map(listing =>
                             <SwiperSlide key={listing._id}>
                                 <div className=" p-1 sm:p-2 h-[325px] md:h-[550px] ">
-                                    <img className="h-full w-full object-fill rounded-xl" src={listing.imageUrls} />
+                                    <img className="h-full w-full object-fill rounded-xl" src={listing.imageUrls} alt="Header images" />
                                 </div>
                             </SwiperSlide>)
                     }
