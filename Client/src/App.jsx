@@ -2,7 +2,6 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Home, { getRentList } from "./pages/Home";
 import SignUp, { signupAction } from "./pages/SignUp";
 import SignIn, { signinAction } from "./pages/SignIn";
-import About from "./pages/About";
 import Profile, { deleteAction, profileUpdateAction } from "./pages/Profile.jsx";
 import RootLayout from "./pages/RootLayout";
 import NewList from "./pages/NewList.jsx";
